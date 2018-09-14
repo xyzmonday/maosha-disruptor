@@ -2,7 +2,7 @@ package com.yff.maosha.config;
 
 import com.yff.maosha.entity.Item;
 import com.yff.maosha.mapper.ItemMapper;
-import com.yff.maosha.memdb.ItemRepository;
+import com.yff.maosha.service.ItemService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,13 +26,13 @@ public class ApplicationStartup implements ApplicationListener<ContextRefreshedE
     private ItemMapper itemMapper;
 
     @Autowired
-    private ItemRepository itemRepository;
+    private ItemService itemService;
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
         List<Item> items = itemMapper.selectByExample(null);
         if(!CollectionUtils.isEmpty(items)) {
-            items.stream().forEach(e -> itemRepository.put(e));
+            items.stream().forEach(e -> itemService.put(e));
         }
     }
 }

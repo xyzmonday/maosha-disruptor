@@ -13,19 +13,19 @@ import javax.jms.Queue;
 import javax.jms.Topic;
 
 @Configuration
-public class JmsConfig {
+public class ActiveMqConfig {
 
     @Autowired
     private ActiveMQConnectionFactory connectionFactory;
 
     @Bean
     public Queue queue() {
-        return new ActiveMQQueue("maosha.queue");
+        return new ActiveMQQueue("miaosha.queue");
     }
 
     @Bean
     public Topic topic() {
-        return new ActiveMQTopic("maosha.topic");
+        return new ActiveMQTopic("miaosha.topic");
     }
 
     @Bean

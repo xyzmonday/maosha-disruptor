@@ -1,20 +1,16 @@
 package com.yff.maosha.disruptor;
 
 import com.lmax.disruptor.dsl.Disruptor;
-import com.yff.maosha.command.Command;
 import com.yff.maosha.command.CommandDispatcher;
 import com.yff.maosha.command.DefaultCommandDispatcher;
 import com.yff.maosha.disruptor.request.*;
 import com.yff.maosha.disruptor.response.ResponseEventProducer;
-import com.yff.maosha.memdb.ItemRepository;
-import com.yff.maosha.memdb.ItemRepositoryImpl;
+import com.yff.maosha.service.ItemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.jms.core.JmsMessagingTemplate;
 
-import javax.jms.Topic;
 import java.util.concurrent.Executors;
 
 /**
@@ -33,7 +29,7 @@ public class RequestEventConfig {
     private ResponseEventProducer responseEventProducer;
 
     @Autowired
-    private ItemRepository itemRepository;
+    private ItemService itemService;
 
    @Bean
    public CommandDispatcher commandDispatcher() {
@@ -51,7 +47,7 @@ public class RequestEventConfig {
         RequestEventProducer requestEventProducer = new RequestEventProducer(disruptor.getRingBuffer());
 
         //业务消费者
-        RequestEventBizHandler requestEventBizHandler = new RequestEventBizHandler(itemRepository);
+        RequestEventBizHandler requestEventBizHandler = new RequestEventBizHandler(itemService);
 
         //将业务消费的数据库命令分发到指定的业务处理器
         RequestEventDbHandler requestEventDbHandler = new RequestEventDbHandler(commandDispatcher());

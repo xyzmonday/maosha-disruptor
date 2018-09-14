@@ -5,13 +5,13 @@ import com.yff.maosha.command.CommandBuffer;
 import com.yff.maosha.command.CommandDispatcher;
 import com.yff.maosha.command.CommandExecutor;
 import com.yff.maosha.command.disruptor.*;
-import com.yff.maosha.config.ItemAmountUpdateProperties;
 import com.yff.maosha.disruptor.item.ItemAmountUpdateCommand;
 import com.yff.maosha.disruptor.item.ItemAmountUpdateCommandBuffer;
 import com.yff.maosha.disruptor.item.ItemAmountUpdateExecutor;
 import com.yff.maosha.disruptor.item.ItemAmountUpdateProcessor;
 import com.yff.maosha.mapper.ItemMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,7 +19,7 @@ import org.springframework.context.annotation.Configuration;
 import java.util.concurrent.Executors;
 
 @Configuration
-@EnableConfigurationProperties(value = {ItemAmountUpdateProperties.class})
+@EnableConfigurationProperties(value = {ItemAmountUpdateConfig.ItemAmountUpdateProperties.class})
 public class ItemAmountUpdateConfig {
 
 
@@ -66,6 +66,46 @@ public class ItemAmountUpdateConfig {
     }
 
 
+    @ConfigurationProperties(prefix = "item-update.proc")
+    public static class ItemAmountUpdateProperties {
+        /**
+         * 处理器数量
+         */
+        private int num;
 
+        /**
+         * 单次执行的SQL条数 (将多条SQL放到一起执行比分多次执行效率高)
+         */
+        private int sqlBufferSize;
+
+        /**
+         * disruptor队列长度, 值必须是2的次方
+         */
+        private int queueSize;
+
+        public int getNum() {
+            return num;
+        }
+
+        public void setNum(int num) {
+            this.num = num;
+        }
+
+        public int getSqlBufferSize() {
+            return sqlBufferSize;
+        }
+
+        public void setSqlBufferSize(int sqlBufferSize) {
+            this.sqlBufferSize = sqlBufferSize;
+        }
+
+        public int getQueueSize() {
+            return queueSize;
+        }
+
+        public void setQueueSize(int queueSize) {
+            this.queueSize = queueSize;
+        }
+    }
 
 }

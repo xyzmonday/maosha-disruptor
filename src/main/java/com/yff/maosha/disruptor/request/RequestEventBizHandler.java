@@ -4,9 +4,9 @@ import com.lmax.disruptor.EventHandler;
 import com.yff.maosha.disruptor.item.ItemAmountUpdateCommand;
 import com.yff.maosha.disruptor.order.OrderInsertCommand;
 import com.yff.maosha.entity.Item;
-import com.yff.maosha.memdb.ItemRepository;
 import com.yff.maosha.model.RequestDto;
 import com.yff.maosha.model.ResponseDto;
+import com.yff.maosha.service.ItemService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,10 +17,10 @@ public class RequestEventBizHandler implements EventHandler<RequestEvent> {
 
     private final static Logger logger = LoggerFactory.getLogger(RequestEventBizHandler.class);
 
-    private final ItemRepository itemRepository;
+    private final ItemService itemService;
 
-    public RequestEventBizHandler(ItemRepository itemRepository) {
-        this.itemRepository = itemRepository;
+    public RequestEventBizHandler(ItemService itemService) {
+        this.itemService = itemService;
     }
 
     /**
@@ -36,7 +36,7 @@ public class RequestEventBizHandler implements EventHandler<RequestEvent> {
         logger.info("BizHandler" + Thread.currentThread().getName());
         RequestDto request = requestEvent.getRequest();
         //获取需要秒杀的商品
-        Item item = itemRepository.get(request.getItemId());
+        Item item = itemService.get(request.getItemId());
         ResponseDto response = new ResponseDto(request.getId());
         if (item == null) {
             response.setSuccess(false);

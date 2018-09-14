@@ -22,13 +22,14 @@ public class JmsConsumer {
     /**
      * 收到秒杀请求消息
      */
-    @JmsListener(destination = "maosha.queue")
+    @JmsListener(destination = "miaosha.queue")
     public void miaoshaRequest(RequestDto request) throws JMSException {
+        logger.info("客户端收到秒杀的请求");
         requestEventProducer.publish(request);
     }
 
     @JmsListener(destination = "miaosha.topic")
     public void miaoshaResponse(ResponseDto response) {
-        logger.info("客户端收到秒杀的请求");
+        logger.info("收到服务端秒杀结果");
     }
 }
