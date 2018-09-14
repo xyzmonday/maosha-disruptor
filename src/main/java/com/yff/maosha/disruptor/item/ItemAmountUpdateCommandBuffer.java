@@ -40,7 +40,7 @@ public class ItemAmountUpdateCommandBuffer implements CommandBuffer<ItemAmountUp
 
     @Override
     public boolean hasRemaining() {
-        return commandBuffer.size() > this.capacity;
+        return commandBuffer.size() < this.capacity;
     }
 
     @Override

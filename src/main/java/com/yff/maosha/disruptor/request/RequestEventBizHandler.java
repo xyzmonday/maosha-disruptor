@@ -1,6 +1,8 @@
 package com.yff.maosha.disruptor.request;
 
 import com.lmax.disruptor.EventHandler;
+import com.yff.maosha.disruptor.item.ItemAmountUpdateCommand;
+import com.yff.maosha.disruptor.order.OrderInsertCommand;
 import com.yff.maosha.entity.Item;
 import com.yff.maosha.memdb.ItemRepository;
 import com.yff.maosha.model.RequestDto;
@@ -40,10 +42,10 @@ public class RequestEventBizHandler implements EventHandler<RequestEvent> {
             response.setSuccess(false);
             response.setErrorMessage("内存中还未缓存商品数据");
         } else if (item.decreaseAmount()) { //扣减库存成功
-           // ItemAmountUpdateCommand itemAmountUpdateCommand = new ItemAmountUpdateCommand(request.getId(), item.getId(), item.getAmount());
-          //  OrderInsertCommand orderInsertCommand = new OrderInsertCommand(request.getId(), item.getId(), request.getUserId());
-           // requestEvent.addCommand(itemAmountUpdateCommand);
-          //  requestEvent.addCommand(orderInsertCommand);
+            ItemAmountUpdateCommand itemAmountUpdateCommand = new ItemAmountUpdateCommand(request.getId(), item.getId(), item.getAmount());
+            OrderInsertCommand orderInsertCommand = new OrderInsertCommand(request.getId(), item.getId(), request.getUserId());
+            requestEvent.addCommand(itemAmountUpdateCommand);
+            requestEvent.addCommand(orderInsertCommand);
         } else {
             response.setSuccess(false);
             response.setErrorMessage("库存不足");

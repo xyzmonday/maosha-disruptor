@@ -25,6 +25,8 @@ public class MiaoshaController {
     @ResponseBody
     public ResponseDto miaosha(@RequestBody RequestDto requestDto) throws JMSException {
         maoshaService.sendMiaoshaRequest(requestDto);
-        return null;
+        ResponseDto responseDto = new ResponseDto(requestDto.getId());
+        responseDto.setSuccess(true);
+        return responseDto;
     }
 }

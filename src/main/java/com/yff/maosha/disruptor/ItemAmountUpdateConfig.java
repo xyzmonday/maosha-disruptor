@@ -42,15 +42,23 @@ public class ItemAmountUpdateConfig {
                     new CommandEventFactory(),
                     itemAmountUpdateProperties.getQueueSize(),
                     Executors.defaultThreadFactory());
-            CommandBuffer<ItemAmountUpdateCommand> commandBuffer = new ItemAmountUpdateCommandBuffer(itemAmountUpdateProperties.getSqlBufferSize());
-            CommandExecutor<ItemAmountUpdateCommandBuffer> commandExecutor = new ItemAmountUpdateExecutor(itemMapper);
+
+            CommandBuffer<ItemAmountUpdateCommand> commandBuffer =
+                    new ItemAmountUpdateCommandBuffer(itemAmountUpdateProperties.getSqlBufferSize());
+
+            CommandExecutor<ItemAmountUpdateCommandBuffer> commandExecutor =
+                    new ItemAmountUpdateExecutor(itemMapper);
+
             CommandEventDbHandler<ItemAmountUpdateCommand> commandEventDbHandler =
                     new CommandEventDbHandler<>(commandBuffer, commandExecutor);
+
             disruptor.handleEventsWith(commandEventDbHandler).then(new CommandEventGcHandler());
             disruptor.setDefaultExceptionHandler(new CommandEventExceptionHandler());
-            CommandEventProducer<ItemAmountUpdateCommand> commandCommandEventProducer =
+
+            CommandEventProducer<ItemAmountUpdateCommand> commandEventProducer =
                     new CommandEventProducer<>(disruptor.getRingBuffer());
-            commandEventProducers[i] = commandCommandEventProducer;
+            commandEventProducers[i] = commandEventProducer;
+            disruptor.start();
         }
         ItemAmountUpdateProcessor itemAmountUpdateProcessor = new ItemAmountUpdateProcessor(commandEventProducers);
         commandDispatcher.registerCommandProcessor(itemAmountUpdateProcessor);

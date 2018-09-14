@@ -24,6 +24,8 @@ public class ItemAmountUpdateExecutor implements CommandExecutor<ItemAmountUpdat
             item.setAmount(command.getAmount());
             list.add(item);
         }
-        itemMapper.batchUpdateAmount(list);
+        if(list.size() > 0) {
+            itemMapper.batchUpdateAmount(list);
+        }
     }
 }

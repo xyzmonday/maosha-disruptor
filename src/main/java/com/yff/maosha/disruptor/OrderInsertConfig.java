@@ -45,6 +45,7 @@ public class OrderInsertConfig {
 
             CommandBuffer<OrderInsertCommand> commandBuffer = new OrderInsertCommandBuffer(orderInsertProperties.getSqlBufferSize());
             CommandExecutor<OrderInsertCommandBuffer> commandExecutor = new OrderInsertExecutor(itemOrderMapper);
+
             disruptor.handleEventsWith(new CommandEventDbHandler(commandBuffer, commandExecutor))
                     .then(new CommandEventGcHandler());
 
@@ -53,6 +54,7 @@ public class OrderInsertConfig {
             CommandEventProducer<OrderInsertCommand> commandEventProducer =
                     new CommandEventProducer<>(disruptor.getRingBuffer());
             commandEventProducers[i] = commandEventProducer;
+            disruptor.start();
         }
 
         OrderInsertProcessor orderInsertProcessor = new OrderInsertProcessor(commandEventProducers);

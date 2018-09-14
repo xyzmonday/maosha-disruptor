@@ -13,7 +13,7 @@ public class ItemRepositoryImpl implements ItemRepository {
 
   @Override
   public void put(Item item) {
-    data.put(Long.valueOf(item.getId()), item);
+    data.put(item.getId(), item);
   }
 
   @Override

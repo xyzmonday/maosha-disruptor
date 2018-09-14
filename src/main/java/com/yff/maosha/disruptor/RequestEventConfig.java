@@ -32,6 +32,9 @@ public class RequestEventConfig {
     @Autowired
     private ResponseEventProducer responseEventProducer;
 
+    @Autowired
+    private ItemRepository itemRepository;
+
    @Bean
    public CommandDispatcher commandDispatcher() {
        return new DefaultCommandDispatcher();
@@ -48,7 +51,6 @@ public class RequestEventConfig {
         RequestEventProducer requestEventProducer = new RequestEventProducer(disruptor.getRingBuffer());
 
         //业务消费者
-        ItemRepository itemRepository = new ItemRepositoryImpl();
         RequestEventBizHandler requestEventBizHandler = new RequestEventBizHandler(itemRepository);
 
         //将业务消费的数据库命令分发到指定的业务处理器

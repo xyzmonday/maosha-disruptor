@@ -9,7 +9,6 @@ import java.util.List;
 
 public class OrderInsertExecutor implements CommandExecutor<OrderInsertCommandBuffer> {
 
-
     private final ItemOrderMapper itemOrderMapper;
 
     public OrderInsertExecutor(ItemOrderMapper itemOrderMapper) {
@@ -23,7 +22,10 @@ public class OrderInsertExecutor implements CommandExecutor<OrderInsertCommandBu
             ItemOrder itemOrder = new ItemOrder();
             itemOrder.setItemId(command.getItemId());
             itemOrder.setUserId(command.getUserId());
+            list.add(itemOrder);
         }
-        itemOrderMapper.batchInsert(list);
+        if(list.size() > 0) {
+            itemOrderMapper.batchInsert(list);
+        }
     }
 }
