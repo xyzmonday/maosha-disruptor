@@ -2,6 +2,7 @@ package com.yff.maosha.disruptor.item;
 
 import com.yff.maosha.command.CommandBuffer;
 import com.yff.maosha.command.CommandBufferOverflowException;
+import com.yff.maosha.service.CommandLogService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,9 +34,7 @@ public class ItemAmountUpdateCommandBuffer implements CommandBuffer<ItemAmountUp
         }
         ItemAmountUpdateCommand prevValue = this.commandBuffer.put(key, command);
         if (prevValue != null) {
-            LOGGER.info("Optimized", command);
         }
-        LOGGER.info("Put", command);
     }
 
     @Override

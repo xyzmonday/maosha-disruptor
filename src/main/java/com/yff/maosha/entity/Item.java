@@ -38,7 +38,6 @@ public class Item {
      * @return
      */
     public boolean decreaseAmount() {
-
         if (!hasRemaining()) {
             return false;
         }

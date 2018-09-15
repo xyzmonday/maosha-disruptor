@@ -1,5 +1,6 @@
 package com.yff.maosha.controller;
 
+import com.yff.maosha.disruptor.request.RequestEventProducer;
 import com.yff.maosha.model.RequestDto;
 import com.yff.maosha.model.ResponseDto;
 import com.yff.maosha.service.MiaoshaService;
@@ -7,6 +8,7 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import sun.misc.Request;
 
 import javax.jms.JMSException;
 
@@ -20,11 +22,16 @@ public class MiaoshaController {
     private MiaoshaService maoshaService;
 
 
+    @Autowired
+    private RequestEventProducer requestEventProducer;
+
+
     @RequestMapping(value = "/item/miaosha",method = RequestMethod.POST)
     @ResponseBody
-    public RequestDto miaosha(@RequestParam("itemId") Long itemId) throws JMSException {
-        RequestDto requestDto = new RequestDto(itemId, getUser());
-        maoshaService.sendMiaoshaRequest(requestDto);
+    public RequestDto miaosha(@RequestBody RequestDto requestDto) throws JMSException {
+        requestDto.setUserId(getUser());
+        //maoshaService.sendMiaoshaRequest(requestDto);
+        requestEventProducer.publish(requestDto);
         return requestDto;
     }
 

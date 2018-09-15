@@ -2,29 +2,29 @@ package com.yff.maosha.command.disruptor;
 
 import com.lmax.disruptor.ExceptionHandler;
 import com.yff.maosha.command.Command;
+import com.yff.maosha.service.CommandLogService;
+import com.yff.maosha.utils.CommandLogStatus;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class CommandEventExceptionHandler<T extends Command> implements ExceptionHandler<CommandEvent<T>> {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(CommandEventExceptionHandler.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CommandEventExceptionHandler.class);
 
-  @Override
-  public void handleEventException(Throwable ex, long sequence, CommandEvent<T> event) {
+    @Override
+    public void handleEventException(Throwable ex, long sequence, CommandEvent<T> event) {
+        LOGGER.error("{} : {}. {} ", event.getCommand().getClass().getName(), event.getCommand().getId(), ExceptionUtils.getStackTrace(ex));
+    }
 
-    LOGGER.error("{} : {}. {} ", event.getCommand().getClass().getName(), event.getCommand().getId(), ExceptionUtils.getStackTrace(ex));
+    @Override
+    public void handleOnStartException(Throwable ex) {
+        LOGGER.error("Exception during onStart()", ex);
+    }
 
-  }
-
-  @Override
-  public void handleOnStartException(Throwable ex) {
-    LOGGER.error("Exception during onStart()", ex);
-  }
-
-  @Override
-  public void handleOnShutdownException(Throwable ex) {
-    LOGGER.error("Exception during onShutdown()", ex);
-  }
+    @Override
+    public void handleOnShutdownException(Throwable ex) {
+        LOGGER.error("Exception during onShutdown()", ex);
+    }
 
 }

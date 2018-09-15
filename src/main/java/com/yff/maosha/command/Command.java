@@ -1,8 +1,7 @@
 package com.yff.maosha.command;
 
-import com.yff.maosha.utils.StrongUuidGenerator;
-
 import java.io.Serializable;
+import java.util.UUID;
 
 /**
  * 当接受到秒杀请求之后，生成一个sql命令，然后发布CommandEvent到Disruptor队列里面。整体的数据流如下：
@@ -29,7 +28,7 @@ public class Command implements Serializable {
     protected final String requestId;
 
     public Command(String requestId) {
-        this(StrongUuidGenerator.getNextId(),requestId);
+        this(UUID.randomUUID().toString().replace("-",""),requestId);
     }
 
 

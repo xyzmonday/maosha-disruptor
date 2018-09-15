@@ -4,7 +4,7 @@
         "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
 <generatorConfiguration>
     <!--导入属性配置 -->
-    <properties resource="properties/datasource.properties"></properties>
+    <properties resource="application.properties"></properties>
     <context id="default" targetRuntime="MyBatis3" defaultModelType="flat">
 
         <property name="javaFileEncoding" value="UTF-8"/>
@@ -61,12 +61,22 @@
                              type="XMLMAPPER">
         </javaClientGenerator>
 
-        <table tableName="item" domainObjectName="Item"
+   <!--     <table tableName="item" domainObjectName="Item"
                enableCountByExample="false" enableUpdateByExample="false"
                enableDeleteByExample="false" enableSelectByExample="true" selectByExampleQueryId="false">
         </table>
 
         <table tableName="ITEM_ORDER" domainObjectName="ItemOrder"
+               enableCountByExample="false" enableUpdateByExample="false"
+               enableDeleteByExample="false" enableSelectByExample="true" selectByExampleQueryId="false">
+        </table>-->
+<!--
+        <table tableName="command_log_header" domainObjectName="CommandLogHeader"
+               enableCountByExample="false" enableUpdateByExample="false"
+               enableDeleteByExample="false" enableSelectByExample="true" selectByExampleQueryId="false">
+        </table>-->
+
+        <table tableName="command_log_detail" domainObjectName="CommandLogDetail"
                enableCountByExample="false" enableUpdateByExample="false"
                enableDeleteByExample="false" enableSelectByExample="true" selectByExampleQueryId="false">
         </table>

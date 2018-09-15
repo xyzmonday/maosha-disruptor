@@ -37,7 +37,6 @@ public class OrderInsertCommandBuffer implements CommandBuffer<OrderInsertComman
             throw new CommandBufferOverflowException();
         }
         this.commandList.add(command);
-        LOGGER.info("Put", command);
     }
 
     @Override

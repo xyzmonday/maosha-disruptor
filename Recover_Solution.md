@@ -77,7 +77,8 @@ A,B: Command名称
 ```
 
 要特别注意的是，每个Command都应该有一个**业务主键**，比如我们这里的商品ID就是业务主键。
-**业务主键**之所以重要是因为当针对某个商品ID的Command存在多个时，其中有一个失败或丢失，并不一定需要恢复那个Command。以[ItemAmountUpdateCommand][src-ItemAmountUpdateCommand]举例：
+**业务主键**之所以重要是因为当针对某个商品ID的Command存在多个时，其中有一个失败或丢失，并不一定需要恢复那个Command。
+以[ItemAmountUpdateCommand][ItemAmountUpdateCommand]举例：
 
 1. [EMIT]: {id: "abcdef", itemId:1, amount=100}/DELIMITER/{其他Command}
 1. [FAIL]: {id: "abcdef", itemId:1, amount=100}

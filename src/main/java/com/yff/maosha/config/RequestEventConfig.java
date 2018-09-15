@@ -1,10 +1,11 @@
-package com.yff.maosha.disruptor;
+package com.yff.maosha.config;
 
 import com.lmax.disruptor.dsl.Disruptor;
 import com.yff.maosha.command.CommandDispatcher;
 import com.yff.maosha.command.DefaultCommandDispatcher;
 import com.yff.maosha.disruptor.request.*;
 import com.yff.maosha.disruptor.response.ResponseEventProducer;
+import com.yff.maosha.service.CommandLogService;
 import com.yff.maosha.service.ItemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,10 +32,13 @@ public class RequestEventConfig {
     @Autowired
     private ItemService itemService;
 
-   @Bean
-   public CommandDispatcher commandDispatcher() {
-       return new DefaultCommandDispatcher();
-   }
+    @Autowired
+    private CommandLogService commandLogService;
+
+    @Bean
+    public CommandDispatcher commandDispatcher() {
+        return new DefaultCommandDispatcher();
+    }
 
     @Bean
     public RequestEventProducer requestEventProducer() {
@@ -47,7 +51,7 @@ public class RequestEventConfig {
         RequestEventProducer requestEventProducer = new RequestEventProducer(disruptor.getRingBuffer());
 
         //业务消费者
-        RequestEventBizHandler requestEventBizHandler = new RequestEventBizHandler(itemService);
+        RequestEventBizHandler requestEventBizHandler = new RequestEventBizHandler(itemService,commandLogService);
 
         //将业务消费的数据库命令分发到指定的业务处理器
         RequestEventDbHandler requestEventDbHandler = new RequestEventDbHandler(commandDispatcher());
@@ -59,13 +63,14 @@ public class RequestEventConfig {
         RequestEventGCHandler requestEventGCHandler = new RequestEventGCHandler();
 
         //异常消费者
-        RequestEventExceptionHandler requestEventExceptionHandler = new RequestEventExceptionHandler();
+       // RequestEventExceptionHandler requestEventExceptionHandler = new RequestEventExceptionHandler();
 
+        //这里不设置默认的异常处理，保证日志处理器持久化成功才能做后续handler
         disruptor.handleEventsWith(requestEventBizHandler)
                 .then(requestEventDbHandler, requestEventJmsHandler)
                 .then(requestEventGCHandler);
 
-        disruptor.setDefaultExceptionHandler(requestEventExceptionHandler);
+        //disruptor.setDefaultExceptionHandler(requestEventExceptionHandler);
 
         disruptor.start();
         return requestEventProducer;

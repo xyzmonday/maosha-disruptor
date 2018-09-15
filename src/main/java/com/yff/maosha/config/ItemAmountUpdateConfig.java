@@ -1,4 +1,4 @@
-package com.yff.maosha.disruptor;
+package com.yff.maosha.config;
 
 import com.lmax.disruptor.dsl.Disruptor;
 import com.yff.maosha.command.CommandBuffer;
@@ -10,6 +10,7 @@ import com.yff.maosha.disruptor.item.ItemAmountUpdateCommandBuffer;
 import com.yff.maosha.disruptor.item.ItemAmountUpdateExecutor;
 import com.yff.maosha.disruptor.item.ItemAmountUpdateProcessor;
 import com.yff.maosha.mapper.ItemMapper;
+import com.yff.maosha.service.CommandLogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -32,27 +33,30 @@ public class ItemAmountUpdateConfig {
     @Autowired
     private ItemAmountUpdateProperties itemAmountUpdateProperties;
 
+    @Autowired
+    private CommandLogService commandLogService;
+
     @Bean
     public ItemAmountUpdateProcessor itemAmountUpdateProcessor() {
         //按照商品的分组（这里分组的规则就是取模），同一组的商品使用同一个处理器
         int num = itemAmountUpdateProperties.getNum();
         CommandEventProducer<ItemAmountUpdateCommand>[] commandEventProducers = new CommandEventProducer[num];
+        Disruptor<CommandEvent<ItemAmountUpdateCommand>> disruptor = new Disruptor<>(
+                new CommandEventFactory(),
+                itemAmountUpdateProperties.getQueueSize(),
+                Executors.defaultThreadFactory());
         for (int i = 0; i < num; i++) {
-            Disruptor<CommandEvent<ItemAmountUpdateCommand>> disruptor = new Disruptor<>(
-                    new CommandEventFactory(),
-                    itemAmountUpdateProperties.getQueueSize(),
-                    Executors.defaultThreadFactory());
-
             CommandBuffer<ItemAmountUpdateCommand> commandBuffer =
                     new ItemAmountUpdateCommandBuffer(itemAmountUpdateProperties.getSqlBufferSize());
 
             CommandExecutor<ItemAmountUpdateCommandBuffer> commandExecutor =
-                    new ItemAmountUpdateExecutor(itemMapper);
+                    new ItemAmountUpdateExecutor(itemMapper,commandLogService);
 
             CommandEventDbHandler<ItemAmountUpdateCommand> commandEventDbHandler =
                     new CommandEventDbHandler<>(commandBuffer, commandExecutor);
 
-            disruptor.handleEventsWith(commandEventDbHandler).then(new CommandEventGcHandler());
+            disruptor.handleEventsWith(commandEventDbHandler)
+                    .then(new CommandEventGcHandler());
             disruptor.setDefaultExceptionHandler(new CommandEventExceptionHandler());
 
             CommandEventProducer<ItemAmountUpdateCommand> commandEventProducer =

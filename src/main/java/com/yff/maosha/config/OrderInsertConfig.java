@@ -1,4 +1,4 @@
-package com.yff.maosha.disruptor;
+package com.yff.maosha.config;
 
 import com.lmax.disruptor.dsl.Disruptor;
 import com.yff.maosha.command.CommandBuffer;
@@ -10,6 +10,7 @@ import com.yff.maosha.disruptor.order.OrderInsertCommandBuffer;
 import com.yff.maosha.disruptor.order.OrderInsertExecutor;
 import com.yff.maosha.disruptor.order.OrderInsertProcessor;
 import com.yff.maosha.mapper.ItemOrderMapper;
+import com.yff.maosha.service.CommandLogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -32,19 +33,22 @@ public class OrderInsertConfig {
     @Autowired
     private OrderInsertProperties orderInsertProperties;
 
+    @Autowired
+    private CommandLogService commandLogService;
+
+
     @Bean
     public OrderInsertProcessor orderInsertProcessor() {
         int num = orderInsertProperties.getNum();
         CommandEventProducer<OrderInsertCommand>[] commandEventProducers = new CommandEventProducer[num];
+        Disruptor<CommandEvent<OrderInsertCommand>> disruptor = new Disruptor<>(
+                new CommandEventFactory(),
+                orderInsertProperties.getQueueSize(),
+                Executors.defaultThreadFactory());
+
         for (int i = 0; i < num; i++) {
-
-            Disruptor<CommandEvent<OrderInsertCommand>> disruptor = new Disruptor<>(
-                    new CommandEventFactory(),
-                    orderInsertProperties.getQueueSize(),
-                    Executors.defaultThreadFactory());
-
             CommandBuffer<OrderInsertCommand> commandBuffer = new OrderInsertCommandBuffer(orderInsertProperties.getSqlBufferSize());
-            CommandExecutor<OrderInsertCommandBuffer> commandExecutor = new OrderInsertExecutor(itemOrderMapper);
+            CommandExecutor<OrderInsertCommandBuffer> commandExecutor = new OrderInsertExecutor(itemOrderMapper,commandLogService);
 
             disruptor.handleEventsWith(new CommandEventDbHandler(commandBuffer, commandExecutor))
                     .then(new CommandEventGcHandler());

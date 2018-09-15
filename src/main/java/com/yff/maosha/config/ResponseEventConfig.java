@@ -1,4 +1,4 @@
-package com.yff.maosha.disruptor;
+package com.yff.maosha.config;
 
 import com.lmax.disruptor.dsl.Disruptor;
 import com.yff.maosha.disruptor.response.ResponseEventHandler;

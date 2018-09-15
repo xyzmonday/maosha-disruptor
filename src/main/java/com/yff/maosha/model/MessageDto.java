@@ -1,9 +1,8 @@
 package com.yff.maosha.model;
 
 
-import com.yff.maosha.utils.StrongUuidGenerator;
-
 import java.io.Serializable;
+import java.util.UUID;
 
 public abstract class MessageDto implements Serializable {
 
@@ -14,7 +13,7 @@ public abstract class MessageDto implements Serializable {
     protected final String id;
 
     public MessageDto() {
-        this.id = StrongUuidGenerator.getNextId();
+        this.id = UUID.randomUUID().toString().replace("-","");
     }
 
     public String getId() {

@@ -29,7 +29,7 @@ public class CommandEventDbHandler<T extends Command> implements EventHandler<Co
 
     @Override
     public void onEvent(CommandEvent<T> commandEvent, long sequence, boolean endOfBatch) throws Exception {
-        logger.info("CommandEventDbHandler 接受到需要处理的命令");
+        logger.info("CommandEventDbHandler ;endOfBatch:{}",endOfBatch);
         if(!this.commandBuffer.hasRemaining()) {
             flushBuffer();
         }

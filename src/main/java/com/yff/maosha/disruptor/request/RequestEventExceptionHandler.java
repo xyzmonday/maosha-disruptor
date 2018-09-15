@@ -2,6 +2,8 @@ package com.yff.maosha.disruptor.request;
 
 import com.lmax.disruptor.ExceptionHandler;
 import com.yff.maosha.model.ResponseDto;
+import com.yff.maosha.service.CommandLogService;
+import com.yff.maosha.utils.CommandLogStatus;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,6 +14,7 @@ import org.slf4j.LoggerFactory;
 public class RequestEventExceptionHandler implements ExceptionHandler<RequestEvent> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RequestEventExceptionHandler.class);
+
 
     @Override
     public void handleEventException(Throwable ex, long sequence, RequestEvent event) {
